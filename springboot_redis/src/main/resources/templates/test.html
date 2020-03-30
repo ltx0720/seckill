@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
+
+</head>
+<body>
+<button onclick="getMsg()">授权</button>
+
+<script>
+    function getMsg() {
+        $.ajax({
+            type: "POST",
+            url: "http://127.0.0.1:8080/test",
+            success: function (data) {
+                alert(data);
+                // getUrl(data);
+            }
+        })
+    }
+
+    function getUrl(data) {
+        $.ajax({
+            type: "POST",
+            url: "http://127.0.0.1:8081/oauth/token",
+            crossDomain: true,
+            data: {
+                "grant_type": "password",
+                "username": "ltx",
+                "password": "ltx",
+                "client_id": "client",
+                "client_secret": "pass",
+                "client_secret": "read",
+            },
+            success: function (data) {
+                alert(data);
+            }
+        })
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>秒杀详情</title>
+    <meta charset="UTF-8">
+    <div th:replace="common :: head"/>
+</head>
+
+<body>
+<script th:inline="javascript">
+    var showUtils={
+        showInfo : function (seckillid, starttime, endtime, nowtime) {
+
+            if (nowtime < starttime){
+                this.showWait();
+            }else if (nowtime > endtime){
+                this.showEnd();
+            }else {
+                this.showSeckill(seckillid)
+            }
+        },
+
+        showEnd : function () {
+            var end = '<p>已结束</p>';
+            $("#info").append(end);
+        },
+
+        showWait : function () {
+            var wait = '<p>未开始</p>';
+            $("#info").append(wait);
+        },
+
+        showSeckill : function (seckillid) {
+            var seckill = '<p class="btn btn-default" role="button" onclick="trySeckill('+seckillid+')">点击秒杀</p>';
+            $("#info").append(seckill);
+        }
+    };
+
+    $(function () {
+        let seckillid = $("#seckillid").text();
+        let starttime = $("#starttime").text();
+        let endtime = $("#endtime").text();
+        var nowtime = new Date();
+
+        showUtils.showInfo(seckillid, starttime, endtime, nowtime);
+    });
+
+    function trySeckill(seckillid) {
+        $.post("/seckill/" + seckillid + "/exposer", function (result) {
+            if (result && result['success']) {
+                var data = result['data'];
+                if (data['expose']) {
+                    var md5 = data['md5'];
+
+                    $.post("/seckill/" + seckillid + "/" + md5 + "/execution", function (seckillResult) {
+                        //显示信息
+                        console.log(seckillResult['success']);
+                        console.log(seckillResult['data']);
+                        if (seckillResult && seckillResult['success']) {
+                            $("#info").append("秒杀成功");
+                        } else {
+                            $("#info").append("秒杀失败");
+                        }
+                    });
+                }
+            } else {
+                console.log("result" + result);
+            }
+        });
+    }
+</script>
+
+<div>
+    <p id="seckillid" hidden="hidden" th:text="${seckill.seckill_id}"></p>
+    <p id="starttime" hidden="hidden" th:text="${seckill.start_time.time}"></p>
+    <p id="endtime" hidden="hidden" th:text="${seckill.end_time.time}"></p>
+
+    <p th:text="${seckill.name}"></p>
+
+    <div id="info">
+    </div>
+
+
+</div>
+
+</body>
+</html>

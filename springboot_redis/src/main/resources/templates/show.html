@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>秒杀列表</title>
+    <div th:replace="common :: head"/>
+</head>
+<body>
+<div>
+    <table class="table tab-content">
+        <thead>
+        <tr>
+            <th>名称</th>
+            <th>库存</th>
+            <th>开始时间</th>
+            <th>结束时间</th>
+            <th>详情页</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="c, State : ${list}">
+            <td th:text="${c.name}"></td>
+            <td th:text="${c.number}"></td>
+            <td th:text="${#dates.format(c.start_time,'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td th:text="${#dates.format(c.end_time,'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td>
+                <button class="btn"><a th:href="@{'/seckill/'+${c.seckill_id}+'/detail'}">链接</a></button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
